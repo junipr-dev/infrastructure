@@ -30,16 +30,27 @@ The `system-utilities/` folder contains tools and scripts used across all projec
 ### Scripts (`scripts/`)
 - `analyze-video.py` - Video content analysis
 - `build_collections.py` - Plex/Kometa collection builder
+- `check-all-repos.sh` - Auto-detect and check all git repositories for issues
 - `download-images.py` - Bulk image downloader
 - `franchise-audit.ps1` - Media server franchise auditing
 
 ### Claude Commands (`claude-commands/`)
 Global Claude Code slash commands available system-wide:
-- `/brand-design` - Complete brand creation system
+
+**Repository Management:**
+- `/start-session` - Start new session (review last session, check repos, show next steps)
+- `/check-repos` - Check all git repositories for uncommitted changes and issues
+- `/end-session` - End-of-session cleanup (commit, push, document progress)
+- `/end-day` - End of day workflow (combines check + end-session + session notes + final report)
+
+**WordPress Development:**
 - `/wp-install` - Install fresh WordPress on VPS
 - `/wp-setup` - Configure WordPress with theme/plugins
 - `/wp-update` - Update current WordPress installation
 - `/wp-update-all` - Update all WordPress installations
+
+**Brand & Design:**
+- `/brand-design` - Complete brand creation system
 
 These are symlinked to `~/.claude/commands/` for global availability.
 
