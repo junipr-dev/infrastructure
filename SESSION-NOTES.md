@@ -4,26 +4,69 @@ This file tracks cross-project work and general development sessions.
 
 ## Current Status
 
-**Cakebuddy MVP complete and running!** Birthday reminder app with Firebase backend.
+**Cakebuddy Phase 2 complete!** All major features implemented:
+- Push notifications (local with Notifee)
+- Google Sign-In with account linking
+- Advance reminders (7, 3, 1, day-of)
+- Phone contact import
+- RevenueCat payments integration
 
 ## Pending Tasks
 
-- [ ] Add push notifications for birthday reminders
-- [ ] Add Google Sign-In button to login screen
-- [ ] Polish UI and test all flows
-- [ ] Add Apple Sign-In before iOS launch (noted in README)
+- [ ] Configure RevenueCat with actual API key
+- [ ] Set up products in App Store Connect / Google Play Console
+- [ ] Add Apple Sign-In before iOS launch
+- [ ] Prepare for Play Store listing
+- [ ] Create privacy policy
 
 ## Next Steps
 
-1. Continue Cakebuddy development - notifications and polish
-2. Prepare for Play Store listing
-3. Create privacy policy
+1. **First thing next session:** Update WSL settings for 32GB RAM (user installed RAM upgrade)
+2. Configure RevenueCat dashboard and replace placeholder API key
+3. Test all Phase 2 features
+4. Prepare for app store submission
 
 ## Blockers/Dependencies
 
-None - development environment is fully set up
+None - all features implemented, just need RevenueCat configuration
 
 ## Session Log
+
+### Session: 2024-12-20 (continued)
+**Accomplishments:**
+- Implemented local push notifications with @notifee/react-native
+- Added Google Sign-In with @react-native-google-signin
+- Implemented account linking flow for Google with existing email/password accounts
+- Added user settings persistence to Firestore for cross-device sync
+- Created advance reminders feature (select 7, 3, 1, or day-of notifications)
+- Built phone contact import with permission handling
+- Integrated RevenueCat payments with PaywallModal
+- Created ReminderDaysSelector and PaywallModal components
+- Added updateUserTier action to Zustand store
+- Updated all relevant screens and navigation
+
+**Commits Made:**
+- projects: "Add Phase 2 features: notifications, Google auth, payments, contact import"
+
+**New Files Created:**
+- src/services/notifications.ts - Local notification scheduling
+- src/services/purchases.ts - RevenueCat integration
+- src/screens/ImportContactsScreen.tsx - Contact import UI
+- src/components/ReminderDaysSelector.tsx - Reminder checkbox UI
+- src/components/PaywallModal.tsx - Subscription upgrade modal
+- REVENUECAT_SETUP.md - Configuration documentation
+
+**Technical Notes:**
+- Used 3 parallel background agents for simultaneous feature development
+- RevenueCat needs API key configuration before payments work
+- All features tested on Android emulator
+
+**Next Session:**
+1. Update WSL .wslconfig for 32GB RAM (user installed upgrade)
+2. Test all new features thoroughly
+3. Configure RevenueCat dashboard
+
+---
 
 ### Session: 2024-12-20 05:30
 **Accomplishments:**
