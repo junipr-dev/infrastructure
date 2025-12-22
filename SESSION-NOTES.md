@@ -4,30 +4,79 @@ This file tracks cross-project work and general development sessions.
 
 ## Current Status
 
-**DealScout API setup in progress.** Gemini and Gmail APIs configured.
+**DealScout nearly ready.** All APIs configured except eBay (pending account approval). VPS subdomain configured.
 
 ## Pending Tasks
 
 - [x] Set up Gemini API key
 - [x] Set up Gmail OAuth credentials
-- [ ] Set up eBay API credentials
-- [ ] Set up Firebase (FCM for push notifications)
-- [ ] Test backend locally
-- [ ] Deploy to VPS (lab.junipr.io)
+- [x] Set up Firebase (FCM for push notifications)
+- [x] Complete Gmail OAuth flow (token.pickle)
+- [x] Set up VPS subdomain (dealscout.junipr.io)
+- [ ] Wait for eBay API account approval (dev@junipr.io)
+- [ ] Add eBay credentials to .env
+- [ ] Deploy backend to VPS
+- [ ] Test full flow
 - [ ] Build and test mobile app
 
 ## Next Steps
 
-1. Continue DealScout API setup (eBay, Firebase)
-2. Test backend locally with configured APIs
-3. Deploy to VPS
-4. Build mobile app
+1. Wait for eBay developer account approval (1+ business day)
+2. Add eBay credentials to backend/.env
+3. Deploy backend to dealscout.junipr.io
+4. Sign up for Swoopa free trial
+5. Test full deal flow
 
 ## Blockers/Dependencies
 
-None - just need to finish API configuration
+- eBay Developer account pending approval (registered with dev@junipr.io)
 
 ## Session Log
+
+### Session: 2024-12-22 00:30
+**Accomplishments:**
+- Set up eBay Developer account with dev@junipr.io (pending approval, old account was suspended)
+- Fixed Google Workspace org policy to allow service account key creation
+- Set up Firebase project (dealscout-88ed6):
+  - Created project in Firebase Console
+  - Downloaded google-services.json for mobile app
+  - Downloaded firebase-service-account.json for backend
+  - Added FIREBASE_PROJECT_ID to .env
+- Configured VPS for DealScout:
+  - Added dealscout.junipr.io subdomain to Cloudflare
+  - Installed nginx and certbot on VPS
+  - Added Caddy config for dealscout.junipr.io → port 8002
+  - SSL will auto-provision on first request
+- Completed Gmail OAuth flow:
+  - Ran OAuth authorization for dealscout25@gmail.com
+  - Generated token.pickle for email access
+- Installed Google Chrome in WSL for future OAuth flows
+- Added DISPLAY=:0 to .bashrc for WSLg GUI support
+- Updated .gitignore to include token.pickle
+- Committed and pushed all changes
+
+**Files Modified:**
+- ~/portfolio/dealscout/backend/.env - Added FIREBASE_PROJECT_ID
+- ~/portfolio/dealscout/backend/firebase-service-account.json - Firebase admin credentials
+- ~/portfolio/dealscout/backend/token.pickle - Gmail OAuth token
+- ~/portfolio/dealscout/mobile/google-services.json - Firebase Android config
+- ~/portfolio/dealscout/.gitignore - Added token.pickle
+- ~/.bashrc - Added DISPLAY=:0 for WSLg
+
+**VPS Changes:**
+- Installed nginx, certbot on junipr-vps
+- Added dealscout.junipr.io to /etc/caddy/Caddyfile
+
+**Commits Made:**
+- dealscout: "Add Firebase config and update gitignore" (89f1013)
+
+**Next Session:**
+1. Check if eBay account approved
+2. Add eBay credentials if approved
+3. Deploy backend to VPS
+4. Test full flow
+
+---
 
 ### Session: 2024-12-21 (continued)
 **Accomplishments:**
