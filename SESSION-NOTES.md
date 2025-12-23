@@ -18,7 +18,7 @@ This file tracks cross-project work and general development sessions.
 - [x] Set up Tailscale for direct P2P connection
 - [x] Complete initial Syncthing sync
 - [x] Switch Syncthing to two-way sync
-- [ ] Wait for eBay API account approval (dev@junipr.io)
+- [x] Wait for eBay API account approval (dev@junipr.io) - APPROVED
 - [ ] Add eBay credentials to .env
 - [ ] Deploy DealScout backend to VPS
 - [ ] Test full DealScout flow
@@ -33,9 +33,32 @@ This file tracks cross-project work and general development sessions.
 
 ## Blockers/Dependencies
 
-- eBay Developer account pending approval (registered with dev@junipr.io)
+- None currently (eBay Developer account approved)
 
 ## Session Log
+
+### Session: 2025-12-22 20:00
+**Accomplishments:**
+- Documented WSL auto-start solution in SYNC-SETUP.md
+  - Working method: Windows Terminal Preview "Launch on machine startup" with Ubuntu as default
+- Fixed media-server agent context file sync (removed duplicate header lines)
+- Noted eBay developer account is approved (will configure later)
+
+**Commits Made:**
+- infrastructure: "Update WSL auto-start solution in sync docs" (3270efc)
+- media-server: "Sync agent context files (AGENTS.md, GEMINI.md)" (82efa77)
+
+**Pending Tasks:**
+- [ ] Add eBay credentials to DealScout backend/.env
+- [ ] Deploy DealScout backend to VPS
+- [ ] Test full DealScout flow
+- [ ] Build and test mobile app
+
+**Next Steps:**
+1. GPU upgrade (user doing now)
+2. When ready, configure eBay credentials and deploy DealScout
+
+---
 
 ### Session: 2025-12-22 19:30 (Sync Setup Finalized)
 **Accomplishments:**
