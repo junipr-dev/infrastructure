@@ -40,6 +40,39 @@ This file tracks cross-project work and general development sessions.
 
 ## Session Log
 
+### Session: 2025-12-23 04:22
+**Accomplishments:**
+- Added distance calculation for deals (location.py service with Haversine formula)
+- Integrated eBay local pickup detection for deals within 100mi of Rickman, TN
+- Added distance display and "Local Pickup" badge on deal cards
+- Created React web app at dealscout.junipr.io (dark theme landing page)
+- Restructured API to /api path (dealscout.junipr.io/api)
+- Implemented eBay OAuth-based authentication system:
+  - User model with session token management
+  - Auth service with token generation and validation
+  - /auth endpoints (status, login, logout, me)
+  - Updated eBay callback to create users and issue session tokens
+  - Mobile AuthContext for app-wide auth state
+- Updated mobile API service with auth methods and token injection
+- Updated Caddy config for web app + API routing
+
+**Commits Made:**
+- dealscout: "Add distance calculation and eBay local pickup detection" (0865ec7)
+- dealscout: "Add web app, API restructure, and eBay OAuth authentication" (a2b6c14)
+
+**Pending Tasks:**
+- [ ] Wire up AuthContext in mobile App.tsx
+- [ ] Add login UI to mobile app
+- [ ] Add auth callback handling in web app
+- [ ] Test full eBay OAuth login flow
+
+**Next Steps:**
+1. Complete mobile app auth integration (login screen, session persistence)
+2. Add auth callback route to web app
+3. Test end-to-end login with real eBay account
+
+---
+
 ### Session: 2025-12-23 01:00
 **Accomplishments:**
 - Configured eBay API credentials in backend/.env
