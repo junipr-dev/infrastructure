@@ -40,6 +40,52 @@ This file tracks cross-project work and general development sessions.
 
 ## Session Log
 
+### Session: 2025-12-24 00:15
+**Accomplishments:**
+- Researched AMD motherboard + CPU combos to replace i9-9900KF under $200
+  - Compared Ryzen 5 5600X, Ryzen 7 5700X, Threadripper PRO 3945WX performance
+  - Found used 5700X (~$170) + B550 (~$50) = best value but slightly over budget
+  - Recommended 5600X + B550 for under $200 (beats 9900KF by 21%)
+- Set up 13 MCP servers for Claude Code:
+  - cloudflare, playwright, postgres, sqlite, filesystem, git, github
+  - memory, fetch, thinking, docker, youtube, websearch
+- Created 5 custom skills in ~/.claude/skills/:
+  - expo-dev: React Native/Expo development in WSL
+  - fastapi-backend: FastAPI endpoint/model/migration patterns
+  - vps-deploy: VPS deployment and systemd service management
+  - dealscout-debug: DealScout-specific debugging
+  - study-buddy-content: Question generator and explainer creation
+- Explained Claude Code extension architecture (MCP servers, skills, hooks, slash commands)
+- Synced global agent context files (CLAUDE.md → AGENTS.md, GEMINI.md)
+
+**MCP Servers Installed:**
+- Connected: memory, github, filesystem
+- Installed (need runtime args): cloudflare, playwright, postgres, sqlite, git, fetch, thinking, docker, youtube, websearch
+
+**Skills Created:**
+- ~/.claude/skills/expo-dev/SKILL.md
+- ~/.claude/skills/fastapi-backend/SKILL.md
+- ~/.claude/skills/vps-deploy/SKILL.md
+- ~/.claude/skills/dealscout-debug/SKILL.md
+- ~/.claude/skills/study-buddy-content/SKILL.md
+
+**Pending Tasks:**
+- [ ] Restart Claude Code to load new MCP servers
+- [ ] Test MCP servers with real queries
+- [ ] Regenerate GitHub PAT (shared in chat)
+
+**Next Steps:**
+1. Restart Claude Code to activate MCP servers
+2. Test memory MCP for cross-session persistence
+3. Continue with DealScout or Study Buddy work
+
+**Notes:**
+- GitHub PAT stored in ~/.claude.json (expires Jan 23, 2026)
+- Memory MCP will enable cross-session knowledge retention
+- Skills auto-activate based on task context (no explicit invocation needed)
+
+---
+
 ### Session: 2025-12-23 04:22
 **Accomplishments:**
 - Added distance calculation for deals (location.py service with Haversine formula)
