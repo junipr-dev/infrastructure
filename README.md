@@ -115,6 +115,25 @@ pip install -r system-utilities/video-analysis-requirements.txt
 
 4. Recreate Python virtual environments (see above)
 
+## VPS (junipr-vps)
+
+Production server hosting lab.junipr.io and other services.
+
+**Access:** `ssh junipr-vps`
+
+| Component | Spec |
+|-----------|------|
+| **OS** | Ubuntu 24.04.3 LTS (Noble Numbat) |
+| **CPU** | Intel Xeon E5-2690 v4 @ 2.60GHz |
+| **vCPUs** | 5 cores |
+| **RAM** | 5.8 GB |
+| **Disk** | 96 GB |
+| **Swap** | 3 GB |
+
+**Key paths:**
+- Lab environment: `/home/deploy/lab`
+- Web access: https://lab.junipr.io
+
 ## Notes
 
 - **Scripts** (shell, python) are version-controlled
