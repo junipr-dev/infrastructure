@@ -714,3 +714,40 @@ cd ~/projects/cakebuddy/app && npx react-native start --host 0.0.0.0
 - All commands moved to `/home/jesse/infrastructure/system-utilities/claude-commands/`
 - Session notes system uses `.session-notes.md` for project-specific, `SESSION-NOTES.md` for global
 - Commands auto-detect which file to use based on context
+
+---
+
+## Session: 2025-12-31 (Late Night)
+
+### Accomplished
+- Verified GPU hardware transcoding is working on Plex with P1000
+  - NVDEC (decode) + NVENC (encode) confirmed active
+  - nvidia-smi shows no processes inside Docker but GPU memory usage confirms activity
+- Updated global context sync method to use faster cp + sed approach
+- Synced all agent context files (CLAUDE.md → AGENTS.md, GEMINI.md)
+
+### Previous Session Work (2025-12-31)
+- Fixed GPU transcoding by installing nvidia-vaapi-driver
+- Disabled Plex trailers (IVA bug with empty stream URLs)
+- Created CAM/Telesync blocking custom format in Radarr
+- Disabled 1337x (rate limiting) and RuTracker (geo-blocked)
+- Documented Disk 2 health warning (8 bad sectors)
+
+### Repository Status
+- All repos clean and pushed
+- homelab: up to date
+- infrastructure: up to date
+- projects: up to date
+- junipr: up to date
+- itsjesse.dev: has untracked portfolio dirs (intentional WIP)
+- dotfiles: not present on dev-lab VM
+
+### Next Session
+- Consider replacing Disk 2 before failure
+- Test more transcoding scenarios to ensure GPU stability
+- Review untracked portfolio projects in itsjesse.dev
+
+### Notes
+- GPU transcoding only activates when video re-encoding is needed
+- Audio transcoding is always CPU-based (normal)
+- Direct play/stream doesn't use GPU (optimal behavior)
