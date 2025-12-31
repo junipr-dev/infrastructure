@@ -4,36 +4,7 @@ This file tracks cross-project work and general development sessions.
 
 ## Current Status
 
-**WSL removed from both machines. Network drives being configured.**
-
-## IMMEDIATE TODO: DESKTOP Network Drive Setup
-
-When user says "/hi desktop", complete these steps:
-
-1. **Set network to Private:**
-   ```powershell
-   Get-NetConnectionProfile | Set-NetConnectionProfile -NetworkCategory Private
-   ```
-
-2. **Enable SMB settings:**
-   ```powershell
-   Enable-NetFirewallRule -DisplayName "File and Printer Sharing (SMB-Out)"
-   Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" -Name AllowInsecureGuestAuth -Value 1 -Type DWord
-   ```
-
-3. **Map L: drive (dev-lab):**
-   - Open Explorer → `\\192.168.99.84`
-   - Credentials: `jesse` / `devlab123`
-   - Right-click `devlab` → Map network drive → L:
-   - Check "Reconnect at sign-in" + "Remember credentials"
-
-4. **Map M: drive (Unraid media):**
-   - Open Explorer → `\\192.168.99.83`
-   - Credentials: `jesse` / `media123`
-   - Right-click `media` → Map network drive → M:
-   - Check "Reconnect at sign-in" + "Remember credentials"
-
-5. **Pin /home/jesse to Quick Access** (optional)
+**WSL removed from both machines. Network drives configured on DESKTOP and LAPTOP.**
 
 ## Pending Tasks
 
@@ -68,6 +39,31 @@ When user says "/hi desktop", complete these steps:
 - Push notifications don't work in Expo Go for SDK 53+ (need development build)
 
 ## Session Log
+
+### Session: 2025-12-31 (New Year's Eve)
+**Accomplishments:**
+- Completed DESKTOP network drive setup:
+  - Set network profile to Private (was Public, blocking SMB)
+  - Created `map-drives.bat` script on Desktop
+  - Mapped L: → `\\192.168.99.84\devlab` (full dev-lab filesystem)
+  - Mapped M: → `\\192.168.99.83\media` (Unraid media share)
+  - Both drives persistent with saved credentials
+- Reset Samba password on dev-lab (same password, just refreshed)
+- Committed savestate flipping master plan document
+
+**Commits Made:**
+- projects: "Add Facebook Marketplace flipping master plan" (448c24b)
+
+**Repository Status:**
+- All repos clean and pushed
+- itsjesse.dev has WIP portfolio projects (untracked, intentional)
+
+**Notes:**
+- SSH sessions can't save Windows credentials (requires interactive session)
+- Used batch script workaround for drive mapping
+- GitHub repo moved notice: projects repo now at itsjessedev/projects.git
+
+---
 
 ### Session: 2025-12-24 00:15
 **Accomplishments:**
