@@ -4,7 +4,36 @@ This file tracks cross-project work and general development sessions.
 
 ## Current Status
 
-**Desktop/Laptop sync configured.** Syncthing + Tailscale running in WSL on both machines. Bidirectional sync active.
+**WSL removed from both machines. Network drives being configured.**
+
+## IMMEDIATE TODO: DESKTOP Network Drive Setup
+
+When user says "/hi desktop", complete these steps:
+
+1. **Set network to Private:**
+   ```powershell
+   Get-NetConnectionProfile | Set-NetConnectionProfile -NetworkCategory Private
+   ```
+
+2. **Enable SMB settings:**
+   ```powershell
+   Enable-NetFirewallRule -DisplayName "File and Printer Sharing (SMB-Out)"
+   Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" -Name AllowInsecureGuestAuth -Value 1 -Type DWord
+   ```
+
+3. **Map L: drive (dev-lab):**
+   - Open Explorer → `\\192.168.99.84`
+   - Credentials: `jesse` / `devlab123`
+   - Right-click `devlab` → Map network drive → L:
+   - Check "Reconnect at sign-in" + "Remember credentials"
+
+4. **Map M: drive (Unraid media):**
+   - Open Explorer → `\\192.168.99.83`
+   - Credentials: `jesse` / `media123`
+   - Right-click `media` → Map network drive → M:
+   - Check "Reconnect at sign-in" + "Remember credentials"
+
+5. **Pin /home/jesse to Quick Access** (optional)
 
 ## Pending Tasks
 
@@ -760,6 +789,56 @@ cd ~/projects/cakebuddy/app && npx react-native start --host 0.0.0.0
 
 ---
 
+## Session: 2025-12-31 (Late Night - Laptop Setup)
+
+### Accomplished
+- **Set up LAPTOP for full development access:**
+  - Installed Tailscale and connected to network (100.68.237.46)
+  - Generated SSH key (`ssh-ed25519...jesse@laptop`)
+  - Created SSH config matching DESKTOP (devlab, unraid, vps hosts)
+  - Added laptop key to dev-lab, Unraid, and VPS authorized_keys
+  - Set up bidirectional SSH: dev-lab can now `ssh laptop`
+
+- **Configured network drives on both LAPTOP and DESKTOP:**
+  - `L:` → `\\192.168.99.84\home` (dev-lab home) - user: jesse, pass: devlab123
+  - `M:` → `\\192.168.99.83\media` (Unraid media) - user: jesse, pass: media123
+  - Reset Unraid Samba password (old one forgotten)
+
+- **Renamed SSH alias:** `server` → `unraid` on all machines (dev-lab, DESKTOP, LAPTOP)
+
+- **Removed WSL completely from both machines:**
+  - Unregistered Ubuntu distros
+  - Removed WSL AppX packages
+  - Disabled WSL and VirtualMachinePlatform Windows features
+  - Hidden Linux from File Explorer navigation pane
+  - Cleaned up WSL app data and config files
+  - Both machines need restart to complete feature removal
+
+- **Updated global context files:**
+  - Added LAPTOP SSH and network info to CLAUDE.md
+  - Added network drive credentials (L: and M:)
+  - Added LAPTOP public key
+  - Synced to AGENTS.md and GEMINI.md
+
+### Credentials Saved
+- dev-lab SMB: jesse / devlab123
+- Unraid SMB: jesse / media123
+- LAPTOP Tailscale IP: 100.68.237.46
+- LAPTOP local IP: 192.168.99.220
+
+### SSH Config (all machines)
+- `ssh devlab` → 192.168.99.84:25831 (dev-lab)
+- `ssh unraid` → 192.168.99.83:22 (Unraid root)
+- `ssh vps` → 204.152.223.104 (Junipr VPS)
+
+### Pending
+- [ ] Restart LAPTOP and DESKTOP to complete WSL removal
+
+### Repository Status
+- All repos clean and up to date
+
+---
+
 ## Session: 2025-12-31 (Late Night)
 
 ### Accomplished
@@ -794,3 +873,27 @@ cd ~/projects/cakebuddy/app && npx react-native start --host 0.0.0.0
 - GPU transcoding only activates when video re-encoding is needed
 - Audio transcoding is always CPU-based (normal)
 - Direct play/stream doesn't use GPU (optimal behavior)
+
+---
+
+## Session: 2025-12-31 (Night - Network Drive Setup)
+
+### Accomplished
+- Rebooted DESKTOP and LAPTOP to complete WSL removal
+- Fixed network drive access issues on LAPTOP:
+  - Root cause: Network profile was set to "Public" (blocks SMB)
+  - Changed to "Private" profile
+  - Enabled SMB firewall rules and AllowInsecureGuestAuth registry key
+  - Reset Samba passwords on dev-lab (jesse/devlab123) and Unraid (jesse/media123)
+- Configured LAPTOP network drives:
+  - L: → `\\192.168.99.84\devlab` (full dev-lab filesystem, not just /home/jesse)
+  - M: → `\\192.168.99.83\media` (Unraid media share)
+- Added SMB2 protocol settings to dev-lab Samba config
+
+### Pending
+- [ ] Complete DESKTOP network drive setup (same as LAPTOP)
+
+### Notes
+- User can pin /home/jesse to Quick Access for easy access
+- Credentials saved with "Remember my credentials" for auto-reconnect on boot
+
