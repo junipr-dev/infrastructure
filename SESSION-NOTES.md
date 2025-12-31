@@ -717,6 +717,49 @@ cd ~/projects/cakebuddy/app && npx react-native start --host 0.0.0.0
 
 ---
 
+## Session: 2025-12-31 (Evening - SSH & Machine Access Setup)
+
+### Accomplished
+- Removed `/home/jesse/dotfiles` folder (redundant - configs already in place in home dir)
+- Updated global context files to remove dotfiles references
+- **Set up bidirectional SSH access between dev-lab and DESKTOP:**
+  - Enabled OpenSSH Server on DESKTOP (Windows 11)
+  - Added dev-lab's public key to DESKTOP's authorized_keys
+  - Created `ssh desktop` alias on dev-lab (192.168.99.145)
+  - Can now make changes to DESKTOP remotely when user requests
+- **Set up DESKTOP → VPS SSH access:**
+  - Added DESKTOP's public key to VPS authorized_keys
+  - Created `ssh vps` alias on DESKTOP
+- **Documented machine access strategy in CLAUDE.md:**
+  - Auto-detection via SSH source IP (192.168.99.145 = DESKTOP, 100.x.x.x = LAPTOP/MOBILE)
+  - DESKTOP: Local ethernet, direct SSH access
+  - LAPTOP: Tailscale-only (simpler, works same-LAN and remote)
+  - MOBILE: Tailscale for services, no SSH back
+  - App testing considerations (Expo/hot reload fine over Tailscale on same LAN)
+
+### Public Keys Saved
+- DESKTOP: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINbhEJtF/lZpKsEeMABjtQvbfE5/2QvHrxQg3wO/I2XZ jesse@desktop`
+- LAPTOP: (to be configured)
+
+### SSH Config Updates
+- dev-lab `~/.ssh/config`: Added `Host desktop` entry
+- DESKTOP `~/.ssh/config`: Added `Host vps` entry (via SCP from dev-lab)
+
+### Naming Convention Established
+- Always use DESKTOP/LAPTOP/MOBILE (not "Windows 11", "Windows 10", etc.)
+
+### Commits Made
+- infrastructure: pulled updates from remote (SESSION-NOTES.md, DEV-LAB-MIGRATION.md)
+
+### Pending
+- [ ] Set up LAPTOP SSH access when ready (get Tailscale IP + public key)
+
+### Next Session
+1. Configure LAPTOP when user is ready
+2. Test SSH access from different machines
+
+---
+
 ## Session: 2025-12-31 (Late Night)
 
 ### Accomplished
