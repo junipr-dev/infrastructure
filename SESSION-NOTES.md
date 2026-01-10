@@ -983,3 +983,36 @@ cd ~/projects/cakebuddy/app && npx react-native start --host 0.0.0.0
 - User can pin /home/jesse to Quick Access for easy access
 - Credentials saved with "Remember my credentials" for auto-reconnect on boot
 
+
+---
+
+### Session: 2026-01-10 (Late Night)
+**Accomplishments:**
+- Ran Kometa poster sweep for franchise consistency (Harry Potter, Pixar collections, etc.)
+- Created Kometa config with TMDb API key and ThePosterDB integrations
+- Attempted local SSL setup with mkcert + NPM (reverted - too complex for home network)
+- Configured NPM as HTTP-only reverse proxy for .local domains
+- Fixed Plex proxy (enabled websockets, disabled buffering)
+- Cleaned up disk space issues from earlier session
+- Moved Unraid HTTPS from 443 to 8443, then back to 443
+- Updated Chrome bookmarks multiple times during SSL troubleshooting
+- Added nested project repos (cyber-academy, income-factory, scrap-lab, tonegeist) to .gitignore
+
+**Commits Made:**
+- projects: "Add nested project repos to gitignore" (7c97555)
+
+**Pending Tasks:**
+- [ ] Verify Plex library loads correctly through plex.local proxy
+- [ ] Monitor disk1 temperature (running 40°C, higher than others)
+- [ ] Disk2 is nearly full (156KB free) - needs attention
+
+**Next Steps:**
+1. Test all .local domains working correctly
+2. Consider moving some content off disk2 if needed
+3. Re-enable downloads when ready (rdtclient disabled)
+
+**Notes:**
+- NPM running on port 80/81 for HTTP reverse proxy
+- All .local domains point to 192.168.99.83 via hosts file
+- Plex needs websockets enabled to work through reverse proxy
+- SSL for local network deemed not worth the complexity
