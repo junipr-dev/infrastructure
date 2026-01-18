@@ -1,0 +1,53 @@
+#!/bin/bash
+# Claude Code wrapper - handles updates before starting
+# Fixes the ENOTEMPTY auto-update issue by using uninstall+install
+
+CLAUDE_BIN="$HOME/.nvm/versions/node/v24.12.0/bin/claude"
+ANTHROPIC_DIR="$HOME/.nvm/versions/node/v24.12.0/lib/node_modules/@anthropic-ai"
+
+# Clean up leftover temp directories from failed updates
+cleanup_temp_dirs() {
+    if [ -d "$ANTHROPIC_DIR" ]; then
+        # Remove temp directories, ignoring errors from FUSE hidden files
+        find "$ANTHROPIC_DIR" -maxdepth 1 -name ".claude-code-*" -type d -exec rm -rf {} \; 2>/dev/null || true
+    fi
+}
+
+# Check for updates and install if available (only if not already running)
+check_update() {
+    # Skip if another Claude instance is running (check for the actual process)
+    if pgrep -f "claude-code/cli.js" > /dev/null 2>&1; then
+        return 0
+    fi
+
+    # Check if update available (quick npm check)
+    local current=$(npm list -g @anthropic-ai/claude-code 2>/dev/null | grep claude-code | sed 's/.*@//')
+    local latest=$(npm view @anthropic-ai/claude-code version 2>/dev/null)
+
+    if [ -n "$latest" ] && [ "$current" != "$latest" ]; then
+        echo "Updating Claude Code: $current -> $latest"
+
+        # Uninstall first to avoid ENOTEMPTY errors from npm's rename behavior
+        npm uninstall -g @anthropic-ai/claude-code 2>/dev/null
+
+        # Clean up any leftover directories
+        cleanup_temp_dirs
+        rm -rf "$ANTHROPIC_DIR/claude-code" 2>/dev/null || true
+
+        # Fresh install
+        if npm install -g @anthropic-ai/claude-code@latest 2>&1; then
+            echo "Update complete."
+        else
+            echo "Update failed. Continuing with current version..."
+        fi
+    fi
+}
+
+# Run cleanup on every start
+cleanup_temp_dirs
+
+# Check for updates (runs quickly, skips if already running)
+check_update
+
+# Launch Claude with skip-permissions and all other arguments
+exec "$CLAUDE_BIN" --dangerously-skip-permissions "$@"
