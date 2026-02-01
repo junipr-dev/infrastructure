@@ -1,0 +1,89 @@
+#!/bin/bash
+# Expo port manager - assigns unique ports to projects to avoid conflicts
+# Usage: expo-port [project-path]
+#   Returns the assigned port for a project, allocating one if needed
+
+PORT_FILE="$HOME/.expo-ports.json"
+
+# Ensure port file exists
+if [ ! -f "$PORT_FILE" ]; then
+    echo '{"ports": {}, "next_port": 8081}' > "$PORT_FILE"
+fi
+
+# Check current port usage
+list_ports() {
+    echo "=== Expo Port Assignments ==="
+    jq -r '.ports | to_entries[] | "\(.key): \(.value)"' "$PORT_FILE"
+    echo ""
+    echo "=== Active Metro Servers ==="
+    ss -tlnp 2>/dev/null | grep -E "808[0-9]" | while read -r line; do
+        port=$(echo "$line" | grep -oE "808[0-9]")
+        pid=$(echo "$line" | grep -oP 'pid=\K[0-9]+')
+        if [ -n "$pid" ]; then
+            cmdline=$(ps -p "$pid" -o args= 2>/dev/null | head -c 60)
+            echo "  Port $port (PID $pid): $cmdline..."
+        fi
+    done
+}
+
+show_help() {
+    echo "Usage: expo-port [OPTIONS] [project-path]"
+    echo ""
+    echo "Options:"
+    echo "  --list, -l    Show all port assignments and active servers"
+    echo "  --help, -h    Show this help"
+    echo ""
+    echo "Examples:"
+    echo "  expo-port                    # Get port for current directory"
+    echo "  expo-port /path/to/project   # Get port for specific project"
+    echo "  npx expo start --port \$(expo-port)  # Start expo on assigned port"
+}
+
+# Handle flags first
+case "$1" in
+    --list|-l)
+        list_ports
+        exit 0
+        ;;
+    --help|-h)
+        show_help
+        exit 0
+        ;;
+esac
+
+# Get project identifier
+if [ -n "$1" ]; then
+    PROJECT_PATH="$(realpath "$1" 2>/dev/null || echo "$1")"
+else
+    PROJECT_PATH="$(pwd)"
+fi
+
+# Try to get name from package.json, fall back to directory path
+if [ -f "$PROJECT_PATH/package.json" ]; then
+    PROJECT_NAME=$(jq -r '.name // empty' "$PROJECT_PATH/package.json")
+fi
+if [ -z "$PROJECT_NAME" ]; then
+    # Use last two path components to differentiate (e.g., "fitlog/mobile" vs "dash/mobile")
+    PROJECT_NAME="$(basename "$(dirname "$PROJECT_PATH")")/$(basename "$PROJECT_PATH")"
+fi
+
+# Get or assign port
+existing_port=$(jq -r ".ports[\"$PROJECT_NAME\"] // empty" "$PORT_FILE")
+
+if [ -n "$existing_port" ]; then
+    echo "$existing_port"
+else
+    # Assign new port
+    next_port=$(jq -r '.next_port' "$PORT_FILE")
+
+    # Check if port is in use, increment if so
+    while ss -tln | grep -q ":$next_port "; do
+        next_port=$((next_port + 1))
+    done
+
+    # Save the assignment
+    jq ".ports[\"$PROJECT_NAME\"] = $next_port | .next_port = $((next_port + 1))" "$PORT_FILE" > "$PORT_FILE.tmp"
+    mv "$PORT_FILE.tmp" "$PORT_FILE"
+
+    echo "$next_port"
+fi
