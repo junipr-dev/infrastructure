@@ -133,16 +133,18 @@ When `autoCompact: false` is set, Claude Code still shows a "Context low" warnin
 2. Cannot be hidden or customized
 3. Conflicts with our own accurate status display
 
-### What We Built
+### What We Attempted
 
-We attempted ANSI escape codes to clear the bottom terminal lines where the warning appears:
+We tried ANSI escape codes to clear the bottom terminal lines where the warning appears:
 
 ```bash
-# Attempt to clear warning (unreliable)
+# Attempted to clear warning - DISABLED due to terminal corruption
 printf '\033[s\033[%d;1H\033[K\033[u' "$row" > /dev/tty
 ```
 
-This is fragile, terminal-dependent, and doesn't fully work.
+**Result:** This caused terminal display corruption (bash output disappearing, display glitches). The escape codes interfere with Claude Code's terminal handling. **We had to disable this workaround.**
+
+Currently there is **no way** to hide the incorrect warning.
 
 ### Suggested Solution
 
