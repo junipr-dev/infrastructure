@@ -205,6 +205,32 @@ Channels organize conversations and handoffs by project:
 
 Longest path match wins, so `/home/user/project-a` uses `project-a` channel, not `global`.
 
+## Maintenance
+
+### Automatic Cleanup (runs every session)
+- `zombie-killer.sh` - Kills orphaned Claude processes, cleans stale session files
+- `archive-manager.sh auto` - Archives old transcripts, deletes originals >24h
+
+### Manual Cleanup Commands
+```bash
+# Full system cleanup (kill zombies, clean files, archive transcripts)
+/zombie-apocalypse
+
+# Archive management
+~/.claude/hooks/archive-manager.sh report   # Show stats
+~/.claude/hooks/archive-manager.sh full     # Full cleanup
+```
+
+### What Gets Cleaned
+| Item | Age Threshold | Action |
+|------|---------------|--------|
+| Session files (.current-session-*) | 30 min | Delete |
+| Context status files | 30 min | Delete |
+| Critical trigger locks | 30 min | Delete |
+| Archived transcripts | 24h | Delete original after archive |
+| Orphaned transcripts | 30 days | Archive then delete |
+| Archived handoffs | 7 days | Delete |
+
 ## Limitations
 
 1. **Network drops** - No handoff created if connection lost
