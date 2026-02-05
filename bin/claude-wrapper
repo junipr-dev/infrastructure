@@ -677,7 +677,7 @@ while true; do
     if type has_active_handoff &>/dev/null && has_active_handoff "$CHANNEL"; then
         HANDOFF_FILE=$(get_active_handoff_file "$CHANNEL")
         HANDOFF_ID=$(get_active_handoff_id "$CHANNEL")
-        echo "Handoff available: $HANDOFF_ID (use 'claude --handoff' to load)"
+        echo -e "Handoff available: \033[1;34mclaude -h $HANDOFF_ID\033[0m"
     fi
 
     log "Clean exit"
