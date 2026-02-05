@@ -18,6 +18,7 @@ RESTART_FILE="$HOME/.claude/.restart-session-${WRAPPER_PID}"
 KILLED_BY_MONITOR="$HOME/.claude/.killed-by-monitor-${WRAPPER_PID}"
 CURRENT_SESSION_FILE="$HOME/.claude/.current-session-${WRAPPER_PID}"
 WALL_DETECTED_FILE="$HOME/.claude/.wall-detected-${WRAPPER_PID}"
+SIGHUP_EXIT_FILE="$HOME/.claude/.sighup-exit-${WRAPPER_PID}"
 
 # Iteration tracking - changes each loop, subprocesses check this to know when to exit
 ITERATION_FILE="$HOME/.claude/.iteration-${WRAPPER_PID}"
@@ -66,8 +67,10 @@ PTY_WRAPPER="$HOME/.claude/bin/pty-wrapper.py"
 
 # Function to launch Claude (through PTY wrapper if available)
 launch_claude() {
+    # PTY wrapper now supports resume mode with picker detection
+    # It automatically switches to cooked mode when Claude's TUI picker is active
     if [ -x "$PTY_WRAPPER" ] && [ -t 0 ]; then
-        # Use PTY wrapper for interactive sessions
+        # Use PTY wrapper for interactive sessions (including resume mode)
         log "Launching via PTY wrapper"
         python3 "$PTY_WRAPPER" "$@"
     else
@@ -104,6 +107,7 @@ cleanup() {
     rm -f "$KILLED_BY_MONITOR"
     rm -f "$ITERATION_FILE"
     rm -f "$WALL_DETECTED_FILE"
+    rm -f "$SIGHUP_EXIT_FILE"
     # Kill all background subprocesses
     kill_iteration_subprocesses
 }
@@ -327,6 +331,7 @@ while [ $# -gt 0 ]; do
     case "$1" in
         -r|-c|--resume|--continue)
             RESUME_MODE=true
+            export CLAUDE_RESUME_MODE=true  # Export for hooks to detect
             FILTERED_ARGS+=("$1")  # Pass through for native picker
             shift
             ;;
@@ -354,6 +359,7 @@ done
 RESTART_COUNT=0
 MAX_RESTARTS=10
 WORKING_DIR="${PWD}"
+SIGHUP_CLOSE_TAB=false
 
 log "=== Wrapper $$ started in $WORKING_DIR ==="
 
@@ -441,7 +447,7 @@ while true; do
 
             # Start session verifier ONLY FOR RESUME MODE
             # Pass the specific project directory to prevent cross-session contamination
-            verify_session_resume "$project_dir"
+            verify_session_resume "$project_dir" 2>/dev/null
 
             # Background task: clean up safety handoff after successful resume
             _resume_iteration="$ITERATION_ID"
@@ -555,7 +561,7 @@ while true; do
         # Show brief warning, then clear and restart
         echo ""
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        echo "  🔄 AUTO-HANDOFF: Context at 96% - creating handoff..."
+        echo "  🔄 AUTO-HANDOFF: Context at wall - restarting..."
         echo "  📁 Channel: $CHANNEL"
         [ -n "$HANDOFF_ID" ] && echo -e "  📋 Handoff: \033[1;34mclaude -h $HANDOFF_ID\033[0m"
         echo "  ⏳ Restarting in 2 seconds..."
@@ -627,6 +633,23 @@ while true; do
     # Clear session tracking
     rm -f "$CURRENT_SESSION_FILE"
 
+    # =========================================================================
+    # SIGHUP DETECTION: Tab close / SSH disconnect
+    # =========================================================================
+    # If PTY wrapper detected SIGHUP (terminal closed), exit cleanly and close tab
+    # No handoff - transcript preserved for `claude -r`
+    # =========================================================================
+    if [ -f "$SIGHUP_EXIT_FILE" ]; then
+        log "SIGHUP detected by PTY wrapper - clean exit, closing tab"
+        rm -f "$SIGHUP_EXIT_FILE"
+        rm -f "$RESTART_FILE" "$RESTART_FILE.dir" "$KILLED_BY_MONITOR"
+
+        # Don't break yet - fall through to close-tab logic after loop
+        # Set a flag to trigger tab close
+        SIGHUP_CLOSE_TAB=true
+        break
+    fi
+
     # Exit code 130 = SIGINT (Ctrl+C) - user wants to quit, never restart
     if [ $EXIT_CODE -eq 130 ]; then
         log "User pressed Ctrl+C - clean exit, no restart"
@@ -689,15 +712,28 @@ log "=== Wrapper finished ==="
 # =============================================================================
 # CHECK FOR CLOSE-TAB SIGNAL
 # =============================================================================
-# If /bye or /discard requested tab close, the close-tab signal file exists.
+# Close tab on:
+# - /bye or /discard (close-tab signal file)
+# - SIGHUP (tab close / SSH disconnect)
 # We close the terminal by killing the parent shell process.
 # =============================================================================
-# Check for session-specific signal (by wrapper PID) or legacy global signal
 CLOSE_TAB_SIGNAL="$HOME/.claude/signals/close-tab-$$"
 CLOSE_TAB_SIGNAL_LEGACY="$HOME/.claude/signals/close-tab"
+SHOULD_CLOSE_TAB=false
+
 if [ -f "$CLOSE_TAB_SIGNAL" ] || [ -f "$CLOSE_TAB_SIGNAL_LEGACY" ]; then
     rm -f "$CLOSE_TAB_SIGNAL" "$CLOSE_TAB_SIGNAL_LEGACY"
-    log "Close-tab signal detected - closing terminal"
+    log "Close-tab signal file detected"
+    SHOULD_CLOSE_TAB=true
+fi
+
+if [ "$SIGHUP_CLOSE_TAB" = true ]; then
+    log "SIGHUP close-tab flag set"
+    SHOULD_CLOSE_TAB=true
+fi
+
+if [ "$SHOULD_CLOSE_TAB" = true ]; then
+    log "Closing terminal tab"
 
     # Get the shell that started this wrapper (our parent)
     PARENT_SHELL_PID=$PPID
