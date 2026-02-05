@@ -158,7 +158,7 @@ start_title_updater() {
     (
         local last_percent=-1
         while true; do
-            sleep 2
+            sleep 1
 
             # Exit if iteration has changed (wrapper looped/restarted)
             local current_iteration=$(cat "$iteration_file" 2>/dev/null)
